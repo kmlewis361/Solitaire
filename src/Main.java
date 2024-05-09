@@ -45,6 +45,8 @@ public class Main extends PApplet {
     //periodic
     public void draw() {
         background(200);
+        image(loadImage("url.jpeg"), 20, 20, 60, 90);
+        deck.get(0).display(100,20);
 
     }
 

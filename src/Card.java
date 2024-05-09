@@ -9,8 +9,8 @@ public class Card {
     public Card(int num, Suit suit){
         this.num = num;
         this.suit = suit;
-        WIDTH = 20;
-        HEIGHT = 30;
+        WIDTH = 60;
+        HEIGHT = 90;
         // this.img = img;
         imageName = num+"_of_";
         if(suit == Suit.HEARTS){
@@ -28,6 +28,6 @@ public class Card {
     }
 
     public void display(int x, int y){
-        Main.app.image(img, x, y, x+WIDTH, x+HEIGHT);
+        Main.app.image(img, x, y, WIDTH, HEIGHT);
     }
 }
