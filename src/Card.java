@@ -5,8 +5,10 @@ public class Card {
     private PImage img;
     private int WIDTH, HEIGHT;
     private String imageName;
+    private boolean up;
 
     public Card(int num, Suit suit){
+        up = true;
         this.num = num;
         this.suit = suit;
         WIDTH = Main.CARD_WIDTH;
@@ -28,7 +30,11 @@ public class Card {
     }
 
     public void display(int x, int y){
-        Main.app.image(img, x, y, WIDTH, HEIGHT);
+        if(up) {
+            Main.app.image(img, x, y, WIDTH, HEIGHT);
+        }else{
+            Main.app.image(Main.app.loadImage("url.jpeg"), x, y, WIDTH, HEIGHT);
+        }
     }
 
     public Suit getSuit(){
@@ -37,5 +43,9 @@ public class Card {
 
     public int getNum(){
         return num;
+    }
+
+    public void flip(){
+        up = !up;
     }
 }

@@ -7,7 +7,7 @@ import static java.util.Collections.shuffle;
 public class Main extends PApplet {
 
     private ArrayList<Card> deck;
-    private int deckX, deckY, currCardX, currCardY, pilesX, heartsY, diamondsY, clubsY, spadesY;
+    private int deckX, deckY, currCardX, currCardY, pilesX, heartsY, diamondsY, clubsY, spadesY, pile1X, pile2X, pile3X, pile4X, pile5X, pile6X, pile7X;
     // int heartsPile, diamondsPile, clubsPile, spadesPile;
     private Card currHearts, currDiamonds, currClubs, currSpades;
     public static int  CARD_WIDTH, CARD_HEIGHT;
