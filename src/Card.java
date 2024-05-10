@@ -30,4 +30,12 @@ public class Card {
     public void display(int x, int y){
         Main.app.image(img, x, y, WIDTH, HEIGHT);
     }
+
+    public Suit getSuit(){
+        return suit;
+    }
+
+    public int getNum(){
+        return num;
+    }
 }
