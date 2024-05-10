@@ -9,8 +9,8 @@ public class Card {
     public Card(int num, Suit suit){
         this.num = num;
         this.suit = suit;
-        WIDTH = 60;
-        HEIGHT = 90;
+        WIDTH = Main.CARD_WIDTH;
+        HEIGHT = Main.CARD_HEIGHT;
         // this.img = img;
         imageName = num+"_of_";
         if(suit == Suit.HEARTS){
