@@ -6,7 +6,7 @@ import static java.util.Collections.shuffle;
 
 public class Main extends PApplet {
 
-    private ArrayList<Card> deck;
+    private ArrayList<Card> deck, drawnPile;
     private int deckX, deckY, currCardX, currCardY, pilesX, heartsY, diamondsY, clubsY, spadesY, boardX, boardY;
     // int heartsPile, diamondsPile, clubsPile, spadesPile;
     private Card currHearts, currDiamonds, currClubs, currSpades;
@@ -48,6 +48,7 @@ public class Main extends PApplet {
         clubsY = diamondsY + CARD_HEIGHT + CARD_WIDTH / 2;
         spadesY = clubsY + CARD_HEIGHT + CARD_WIDTH / 2;
         deck = new ArrayList<Card>();
+        drawnPile = new ArrayList<Card>();
         board = new Card[13][7];
         Suit currentSuit;
         for (int i = 1; i <= 4; i++) {
@@ -79,8 +80,11 @@ public class Main extends PApplet {
     public void draw() {
         background(200);
         image(loadImage("url.jpeg"), deckX, deckY, CARD_WIDTH, CARD_HEIGHT);
-        if (currCard != null) {
-            currCard.display(currCardX, currCardY);
+//        if (currCard != null) {
+//            currCard.display(currCardX, currCardY);
+//        }
+        if (!drawnPile.isEmpty()) {
+            drawnPile.getLast().display(currCardX, currCardY);
         }
         if (currHearts != null) {
             currHearts.display(pilesX, heartsY);
@@ -117,12 +121,18 @@ public class Main extends PApplet {
             }
         }
         if (checkMouseBounds(deckX, deckY, CARD_WIDTH, CARD_HEIGHT)) {
-            currCardIndex++;
-            if (currCardIndex >= deck.size()) {
-                currCardIndex = -1;
-                currCard = null;
+//            currCardIndex++;
+//            if (currCardIndex >= deck.size()) {
+//                currCardIndex = -1;
+//                currCard = null;
+//            } else {
+//                currCard = deck.get(currCardIndex);
+//            }
+            if (deck.size() > 0) {
+                drawnPile.add(deck.removeFirst());
             } else {
-                currCard = deck.get(currCardIndex);
+                deck.addAll(drawnPile);
+                drawnPile.clear();
             }
 
         }else if (currCard != null && checkMouseBounds(currCardX, currCardY, CARD_WIDTH, CARD_HEIGHT)) {
