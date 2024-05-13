@@ -11,8 +11,6 @@ public class Main extends PApplet {
     // int heartsPile, diamondsPile, clubsPile, spadesPile;
     private Card currHearts, currDiamonds, currClubs, currSpades;
     public static int CARD_WIDTH, CARD_HEIGHT;
-    private int currCardIndex;
-    private Card currCard;
     private Card[][] board;
 
     //setting up PApplet
@@ -41,7 +39,6 @@ public class Main extends PApplet {
         boardY = deckY;
         currCardX = deckX;
         currCardY = deckY + CARD_WIDTH / 2 + CARD_HEIGHT;
-        currCardIndex = -1;
         pilesX = width - CARD_WIDTH * 2;
         heartsY = CARD_WIDTH / 2;
         diamondsY = heartsY + CARD_HEIGHT + CARD_WIDTH / 2;
@@ -80,9 +77,7 @@ public class Main extends PApplet {
     public void draw() {
         background(200);
         image(loadImage("url.jpeg"), deckX, deckY, CARD_WIDTH, CARD_HEIGHT);
-//        if (currCard != null) {
-//            currCard.display(currCardX, currCardY);
-//        }
+
         if (!drawnPile.isEmpty()) {
             drawnPile.getLast().display(currCardX, currCardY);
         }
@@ -121,13 +116,6 @@ public class Main extends PApplet {
             }
         }
         if (checkMouseBounds(deckX, deckY, CARD_WIDTH, CARD_HEIGHT)) {
-//            currCardIndex++;
-//            if (currCardIndex >= deck.size()) {
-//                currCardIndex = -1;
-//                currCard = null;
-//            } else {
-//                currCard = deck.get(currCardIndex);
-//            }
             if (deck.size() > 0) {
                 drawnPile.add(deck.removeFirst());
             } else {
@@ -135,10 +123,9 @@ public class Main extends PApplet {
                 drawnPile.clear();
             }
 
-        }else if (currCard != null && checkMouseBounds(currCardX, currCardY, CARD_WIDTH, CARD_HEIGHT)) {
-            addToPile(currCard);
-            currCardIndex--;
-            currCard = null;
+        }else if (!drawnPile.isEmpty() && checkMouseBounds(currCardX, currCardY, CARD_WIDTH, CARD_HEIGHT)) {
+            addToPile(drawnPile.removeLast());
+
         }
     }
 
