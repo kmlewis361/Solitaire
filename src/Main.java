@@ -7,12 +7,13 @@ import static java.util.Collections.shuffle;
 public class Main extends PApplet {
 
     private ArrayList<Card> deck;
-    private int deckX, deckY, currCardX, currCardY, pilesX, heartsY, diamondsY, clubsY, spadesY, pile1X, pile2X, pile3X, pile4X, pile5X, pile6X, pile7X;
+    private int deckX, deckY, currCardX, currCardY, pilesX, heartsY, diamondsY, clubsY, spadesY, boardX, boardY;
     // int heartsPile, diamondsPile, clubsPile, spadesPile;
     private Card currHearts, currDiamonds, currClubs, currSpades;
     public static int  CARD_WIDTH, CARD_HEIGHT;
     private int currCardIndex;
     private Card currCard;
+    private Card[][] board;
 
     //setting up PApplet
     public static Main app;
@@ -35,6 +36,8 @@ public class Main extends PApplet {
         CARD_HEIGHT = 130;
         deckX = 20;
         deckY = 20;
+        boardX = deckX + CARD_WIDTH + CARD_WIDTH/2;
+        boardY = deckY;
         currCardX = deckX;
         currCardY = deckY + CARD_WIDTH/2 + CARD_HEIGHT;
         currCardIndex = -1;
@@ -44,6 +47,7 @@ public class Main extends PApplet {
         clubsY = diamondsY + CARD_HEIGHT + CARD_WIDTH/2;
         spadesY = clubsY + CARD_HEIGHT + CARD_WIDTH/2;
         deck = new ArrayList<Card>();
+        board = new Card[13][7];
         Suit currentSuit;
         for(int i=1; i<=4; i++){
             for(int j=1; j<=13; j++){
@@ -59,8 +63,15 @@ public class Main extends PApplet {
                 deck.add(new Card(j, currentSuit));
             }
         }
-       // shuffle(deck);
-
+        shuffle(deck);
+        for (int c = 0; c < board[0].length; c++) {
+            for (int r = 0; r <= c; r++) {
+                board[r][c] = deck.removeFirst();
+                if (r < c) {
+                    board[r][c].flip();
+                }
+            }
+        }
     }
 
     //periodic
@@ -82,6 +93,13 @@ public class Main extends PApplet {
         if(currSpades != null){
             currSpades.display(pilesX, spadesY);
         }
+        for (int c = 0; c < board[0].length; c++) {
+            for (int r = 0; r < board.length; r++) {
+                if (board[r][c] != null) {
+                    board[r][c].display(boardX + c * (CARD_WIDTH + CARD_WIDTH/2), boardY + r * CARD_WIDTH/2);
+                }
+            }
+        }
     }
 
     public void mouseClicked(){
@@ -96,65 +114,63 @@ public class Main extends PApplet {
             }
 
         }else if(currCard!=null && checkMouseBounds(currCardX, currCardY, CARD_WIDTH, CARD_HEIGHT)){
-            if(currCard.getSuit() == Suit.HEARTS){
-                if(currCard.getNum()==1) {
-                    currHearts = currCard;
-                    deck.remove(currHearts);
-                    currCardIndex--;
-                    currCard = null;
-                }else if(currHearts!= null && currCard.getNum()==currHearts.getNum()+1){
-                    currHearts = currCard;
-                    deck.remove(currHearts);
-                    currCardIndex--;
-                    currCard = null;
-                }
-            }else if(currCard.getSuit() == Suit.DIAMONDS){
-                if(currCard.getNum()==1) {
-                    currDiamonds = currCard;
-                    deck.remove(currDiamonds);
-                    currCardIndex--;
-                    currCard = null;
-                }else if(currDiamonds!= null && currCard.getNum()==currDiamonds.getNum()+1){
-                    currDiamonds = currCard;
-                    deck.remove(currDiamonds);
-                    currCardIndex--;
-                    currCard = null;
-                }
-            }else if(currCard.getSuit() == Suit.CLUBS){
-                if(currCard.getNum()==1) {
-                    currClubs = currCard;
-                    deck.remove(currClubs);
-                    currCardIndex--;
-                    currCard = null;
-                }else if(currClubs!= null && currCard.getNum()==currClubs.getNum()+1){
-                    currClubs = currCard;
-                    deck.remove(currClubs);
-                    currCardIndex--;
-                    currCard = null;
-                }
-            }else if(currCard.getSuit() == Suit.SPADES){
-                if(currCard.getNum()==1) {
-                    currSpades = currCard;
-                    deck.remove(currSpades);
-                    currCardIndex--;
-                    currCard = null;
-                }else if(currSpades!= null && currCard.getNum()==currSpades.getNum()+1){
-                    currSpades = currCard;
-                    deck.remove(currSpades);
-                    currCardIndex--;
-                    currCard = null;
-                }
+//            if(currCard.getSuit() == Suit.HEARTS){
+//                if(currCard.getNum()==1) {
+//                    currHearts = currCard;
+//                    deck.remove(currHearts);
+//                    currCardIndex--;
+//                    currCard = null;
+//                }else if(currHearts!= null && currCard.getNum()==currHearts.getNum()+1){
+//                    currHearts = currCard;
+//                    deck.remove(currHearts);
+//                    currCardIndex--;
+//                    currCard = null;
+//                }
+//            }else if(currCard.getSuit() == Suit.DIAMONDS){
+//                if(currCard.getNum()==1) {
+//                    currDiamonds = currCard;
+//                    deck.remove(currDiamonds);
+//                    currCardIndex--;
+//                    currCard = null;
+//                }else if(currDiamonds!= null && currCard.getNum()==currDiamonds.getNum()+1){
+//                    currDiamonds = currCard;
+//                    deck.remove(currDiamonds);
+//                    currCardIndex--;
+//                    currCard = null;
+//                }
+//            }else if(currCard.getSuit() == Suit.CLUBS){
+//                if(currCard.getNum()==1) {
+//                    currClubs = currCard;
+//                    deck.remove(currClubs);
+//                    currCardIndex--;
+//                    currCard = null;
+//                }else if(currClubs!= null && currCard.getNum()==currClubs.getNum()+1){
+//                    currClubs = currCard;
+//                    deck.remove(currClubs);
+//                    currCardIndex--;
+//                    currCard = null;
+//                }
+//            }else if(currCard.getSuit() == Suit.SPADES){
+//                if(currCard.getNum()==1) {
+//                    currSpades = currCard;
+//                    deck.remove(currSpades);
+//                    currCardIndex--;
+//                    currCard = null;
+//                }else if(currSpades!= null && currCard.getNum()==currSpades.getNum()+1){
+//                    currSpades = currCard;
+//                    deck.remove(currSpades);
+//                    currCardIndex--;
+//                    currCard = null;
+//                }
+            currCard.flip();
             }
         }
-
-
-    }
 
     private boolean checkMouseBounds(int x, int y, int w, int h){
         return mouseX>x && mouseX<x+w && mouseY>y && mouseY<y+h;
     }
-    public void keyPressed(){
-
-    }
+//    public void keyPressed(){
+//
+//    }
 
 }
