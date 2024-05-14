@@ -48,4 +48,8 @@ public class Card {
     public void flip(){
         up = !up;
     }
+
+    public String toString() {
+        return num + " of " + suit;
+    }
 }

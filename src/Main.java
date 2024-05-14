@@ -103,29 +103,50 @@ public class Main extends PApplet {
     }
 
     public void mouseClicked() {
-        // if(mouseX>deckX && mouseX<deckX+CARD_WIDTH && mouseY>deckY && mouseY<deckY+CARD_HEIGHT){
-        int r;
-        for (int c = 0; c < board[0].length; c++) {
-            r = getLast(c);
-            if (checkMouseBounds(boardX + c * (CARD_WIDTH + CARD_WIDTH / 2), boardY + r * CARD_WIDTH / 2, CARD_WIDTH, CARD_HEIGHT)) {
-                addToPile(board[r][c]);
-                board[r][c] = null;
-                if (r > 0) {
-                    board[r - 1][c].flip();
+        println(getBoardCardClicked(mouseX, mouseY));
+        //checking if last card in each board column has been clicked
+//        int r;
+//        for (int c = 0; c < board[0].length; c++) {
+//            r = getLast(c);
+//            if (checkMouseBounds(boardX + c * (CARD_WIDTH + CARD_WIDTH / 2), boardY + r * CARD_WIDTH / 2, CARD_WIDTH, CARD_HEIGHT)) {
+//                if (addToPile(board[r][c])) {
+//                    board[r][c] = null;
+//                    if (r > 0) {
+//                        board[r - 1][c].flip();
+//                    }
+//                }
+//            }
+//        }
+        Card clicked = getBoardCardClicked(mouseX, mouseY);
+        if(clicked != null){
+            //checking if it's the last card in a column and adding to suite pile if it is
+            for(int c = 0; c < board[0].length; c++){
+                int r = getLast(c);
+                if(clicked == board[r][c] && addToPile(clicked)){
+                    board[r][c] = null;
+                    if (r > 0) {
+                        board[r - 1][c].flip();
+                    }
                 }
             }
         }
+
+        //checking if deck clicked
         if (checkMouseBounds(deckX, deckY, CARD_WIDTH, CARD_HEIGHT)) {
-            if (deck.size() > 0) {
+            if (!deck.isEmpty()) {
                 drawnPile.add(deck.removeFirst());
             } else {
                 deck.addAll(drawnPile);
                 drawnPile.clear();
             }
 
-        }else if (!drawnPile.isEmpty() && checkMouseBounds(currCardX, currCardY, CARD_WIDTH, CARD_HEIGHT)) {
-            addToPile(drawnPile.removeLast());
-
+        //checking if current card is clicked
+        } else if (!drawnPile.isEmpty() && checkMouseBounds(currCardX, currCardY, CARD_WIDTH, CARD_HEIGHT)) {
+            if (addToPile(drawnPile.getLast())) {
+                drawnPile.removeLast();
+            } else if (addToBoard(drawnPile.getLast())) {
+                drawnPile.removeLast();
+            }
         }
     }
 
@@ -146,39 +167,75 @@ public class Main extends PApplet {
         return board.length - 1;
     }
 
-    private void addToPile(Card card) {
+    private boolean addToPile(Card card) {
         if (card.getSuit() == Suit.HEARTS) {
-            if (card.getNum() == 1) {
+            if (card.getNum() == 1 || (currHearts != null && card.getNum() == currHearts.getNum() + 1)) {
                 currHearts = card;
-                deck.remove(currHearts);
-            } else if (currHearts != null && card.getNum() == currHearts.getNum() + 1) {
-                currHearts = card;
-                deck.remove(currHearts);
+                return true;
             }
         } else if (card.getSuit() == Suit.DIAMONDS) {
-            if (card.getNum() == 1) {
+            if (card.getNum() == 1 || (currDiamonds != null && card.getNum() == currDiamonds.getNum() + 1)) {
                 currDiamonds = card;
-                deck.remove(currDiamonds);
-            } else if (currDiamonds != null && card.getNum() == currDiamonds.getNum() + 1) {
-                currDiamonds = card;
-                deck.remove(currDiamonds);
+                return true;
             }
         } else if (card.getSuit() == Suit.CLUBS) {
-            if (card.getNum() == 1) {
+            if (card.getNum() == 1 || (currClubs != null && card.getNum() == currClubs.getNum() + 1)) {
                 currClubs = card;
-                deck.remove(currClubs);
-            } else if (currClubs != null && card.getNum() == currClubs.getNum() + 1) {
-                currClubs = card;
-                deck.remove(currClubs);
+                return true;
             }
         } else if (card.getSuit() == Suit.SPADES) {
-            if (card.getNum() == 1) {
+            if (card.getNum() == 1 || (currSpades != null && card.getNum() == currSpades.getNum() + 1)) {
                 currSpades = card;
-                deck.remove(currSpades);
-            } else if (currSpades != null && card.getNum() == currSpades.getNum() + 1) {
-                currSpades = card;
-                deck.remove(currSpades);
+                return true;
             }
         }
+        return false;
+    }
+
+    private boolean addToBoard(Card card) {
+        for (int c = 0; c < board[0].length; c++) {
+            int r = getLast(c);
+            if (r == board.length) {
+                println("too many cards in column " + c);
+            }
+            Card last = board[r][c];
+            if (oppositeColor(card, last) && card.getNum() == last.getNum() - 1) {
+                board[r + 1][c] = card;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean oppositeColor(Card c1, Card c2) {
+        if (c1.getSuit() == Suit.HEARTS || c1.getSuit() == Suit.DIAMONDS) {
+            if (c2.getSuit() == Suit.CLUBS || c2.getSuit() == Suit.SPADES) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            if (c2.getSuit() == Suit.HEARTS || c2.getSuit() == Suit.DIAMONDS) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    private Card getBoardCardClicked(int mX, int mY) {
+        int c = (mX - boardX) / (CARD_WIDTH + CARD_WIDTH/2);
+        int last = getLast(c);
+        println("last: " + last);
+        int r = (mY - boardY) / (CARD_WIDTH/2);
+        if(mY >= boardY + last * CARD_WIDTH / 2 && mY <= boardY + last * CARD_WIDTH / 2 + CARD_HEIGHT){
+            println("returning last");
+            r = last;
+        }
+
+        if (r >= 0 && r < board.length && c >=0 && c < board[0].length) {
+            return board[r][c];
+        }
+        return null;
     }
 }
