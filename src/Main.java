@@ -104,31 +104,34 @@ public class Main extends PApplet {
 
     public void mouseClicked() {
         println(getBoardCardClicked(mouseX, mouseY));
-        //checking if last card in each board column has been clicked
-//        int r;
-//        for (int c = 0; c < board[0].length; c++) {
-//            r = getLast(c);
-//            if (checkMouseBounds(boardX + c * (CARD_WIDTH + CARD_WIDTH / 2), boardY + r * CARD_WIDTH / 2, CARD_WIDTH, CARD_HEIGHT)) {
-//                if (addToPile(board[r][c])) {
-//                    board[r][c] = null;
-//                    if (r > 0) {
-//                        board[r - 1][c].flip();
-//                    }
-//                }
-//            }
-//        }
-        Card clicked = getBoardCardClicked(mouseX, mouseY);
+        Coordinate clickedCoord = getBoardCardClicked(mouseX, mouseY);
+        Card clicked = null;
+        if(clickedCoord!=null){
+             clicked = board[clickedCoord.getR()][clickedCoord.getC()];
+        }
         if(clicked != null){
-            //checking if it's the last card in a column and adding to suite pile if it is
-            for(int c = 0; c < board[0].length; c++){
-                int r = getLast(c);
-                if(clicked == board[r][c] && addToPile(clicked)){
+            println("clicked != null");
+            int r = clickedCoord.getR();
+            int c = clickedCoord.getC();
+            if((r==board.length-1 || (r<board.length && board[r+1][c] == null)&&addToPile(clicked))) {
+
                     board[r][c] = null;
                     if (r > 0) {
-                        board[r - 1][c].flip();
+                        board[r - 1][c].faceUp();
                     }
+            } else if(addToBoard(clicked)){
+                board[clickedCoord.getR()][clickedCoord.getC()] = null;
+                if(r > 0 &&  board[r-1][c] != null){
+                    board[r-1][c].faceUp();
+                }
+                r++;
+                while(board[r][c]!=null && addToBoard(board[r][c])){
+                    println(r);
+                    board[r][c]=null;
+                    r++;
                 }
             }
+//
         }
 
         //checking if deck clicked
@@ -199,9 +202,14 @@ public class Main extends PApplet {
                 println("too many cards in column " + c);
             }
             Card last = board[r][c];
-            if (oppositeColor(card, last) && card.getNum() == last.getNum() - 1) {
-                board[r + 1][c] = card;
-                return true;
+            if(board[r+1][c]!=card) {
+                if (last == null && card.getNum() == 13) {
+                    board[0][c] = card;
+                    return true;
+                } else if (last != null && oppositeColor(card, last) && card.getNum() == last.getNum() - 1) {
+                    board[r + 1][c] = card;
+                    return true;
+                }
             }
         }
         return false;
@@ -223,18 +231,18 @@ public class Main extends PApplet {
         }
     }
 
-    private Card getBoardCardClicked(int mX, int mY) {
+    private Coordinate getBoardCardClicked(int mX, int mY) {
         int c = (mX - boardX) / (CARD_WIDTH + CARD_WIDTH/2);
         int last = getLast(c);
-        println("last: " + last);
+       // println("last: " + last);
         int r = (mY - boardY) / (CARD_WIDTH/2);
         if(mY >= boardY + last * CARD_WIDTH / 2 && mY <= boardY + last * CARD_WIDTH / 2 + CARD_HEIGHT){
-            println("returning last");
+         //   println("returning last");
             r = last;
         }
 
         if (r >= 0 && r < board.length && c >=0 && c < board[0].length) {
-            return board[r][c];
+            return new Coordinate(r, c);
         }
         return null;
     }

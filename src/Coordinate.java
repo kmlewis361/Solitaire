@@ -1,15 +1,18 @@
 public class Coordinate {
-    private int x, y;
-    public Coordinate(int x, int y){
-        this.x = x;
-        this.y = y;
+    private int r, c;
+
+    public Coordinate(int r, int c){
+        this.r = r;
+        this.c = c;
     }
 
-    public int getX(){
-        return x;
+    public int getR(){
+        return r;
     }
 
-    public int getY(){
-        return y;
+    public int getC(){
+        return c;
     }
+
+    public String toString(){return r+ ", "+c;}
 }
