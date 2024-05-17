@@ -46,7 +46,7 @@ public class Main extends PApplet {
         spadesY = clubsY + CARD_HEIGHT + CARD_WIDTH / 2;
         deck = new ArrayList<Card>();
         drawnPile = new ArrayList<Card>();
-        board = new Card[13][7];
+        board = new Card[19][7];
         Suit currentSuit;
         for (int i = 1; i <= 4; i++) {
             for (int j = 1; j <= 13; j++) {
@@ -233,6 +233,9 @@ public class Main extends PApplet {
 
     private Coordinate getBoardCardClicked(int mX, int mY) {
         int c = (mX - boardX) / (CARD_WIDTH + CARD_WIDTH/2);
+        if(c>=board[0].length||c<0){
+            return null;
+        }
         int last = getLast(c);
        // println("last: " + last);
         int r = (mY - boardY) / (CARD_WIDTH/2);
