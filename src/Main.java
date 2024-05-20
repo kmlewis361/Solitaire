@@ -10,6 +10,7 @@ public class Main extends PApplet {
     private int deckX, deckY, currCardX, currCardY, pilesX, heartsY, diamondsY, clubsY, spadesY, boardX, boardY;
     // int heartsPile, diamondsPile, clubsPile, spadesPile;
     private Card currHearts, currDiamonds, currClubs, currSpades;
+    private boolean gameDone;
     public static int CARD_WIDTH, CARD_HEIGHT;
     private Card[][] board;
 
@@ -47,6 +48,7 @@ public class Main extends PApplet {
         deck = new ArrayList<Card>();
         drawnPile = new ArrayList<Card>();
         board = new Card[13][7];
+        gameDone = false;
         Suit currentSuit;
         for (int i = 1; i <= 4; i++) {
             for (int j = 1; j <= 13; j++) {
@@ -71,86 +73,99 @@ public class Main extends PApplet {
                 }
             }
         }
+        textAlign(CENTER, CENTER);
     }
 
     //periodic
     public void draw() {
         background(200);
-        image(loadImage("url.jpeg"), deckX, deckY, CARD_WIDTH, CARD_HEIGHT);
-
-        if (!drawnPile.isEmpty()) {
-            drawnPile.getLast().display(currCardX, currCardY);
-        }
-        if (currHearts != null) {
-            currHearts.display(pilesX, heartsY);
-        }
-        if (currDiamonds != null) {
-            currDiamonds.display(pilesX, diamondsY);
-        }
-        if (currClubs != null) {
-            currClubs.display(pilesX, clubsY);
-        }
-        if (currSpades != null) {
-            currSpades.display(pilesX, spadesY);
-        }
-        for (int c = 0; c < board[0].length; c++) {
-            for (int r = 0; r < board.length; r++) {
-                if (board[r][c] != null) {
-                    board[r][c].display(boardX + c * (CARD_WIDTH + CARD_WIDTH / 2), boardY + r * CARD_WIDTH / 2);
+        if (pilesFull()) {
+            fill(0);
+            textSize(50);
+            text("You win! Click to restart", width/2, height/2);
+        } else {
+            if (!deck.isEmpty()) {
+                image(loadImage("url.jpeg"), deckX, deckY, CARD_WIDTH, CARD_HEIGHT);
+            }
+            if (!drawnPile.isEmpty()) {
+                drawnPile.getLast().display(currCardX, currCardY);
+            }
+            if (currHearts != null) {
+                currHearts.display(pilesX, heartsY);
+            }
+            if (currDiamonds != null) {
+                currDiamonds.display(pilesX, diamondsY);
+            }
+            if (currClubs != null) {
+                currClubs.display(pilesX, clubsY);
+            }
+            if (currSpades != null) {
+                currSpades.display(pilesX, spadesY);
+            }
+            for (int c = 0; c < board[0].length; c++) {
+                for (int r = 0; r < board.length; r++) {
+                    if (board[r][c] != null) {
+                        board[r][c].display(boardX + c * (CARD_WIDTH + CARD_WIDTH / 2), boardY + r * CARD_WIDTH / 2);
+                    }
                 }
             }
         }
     }
 
     public void mouseClicked() {
-        println(getBoardCardClicked(mouseX, mouseY));
-        Coordinate clickedCoord = getBoardCardClicked(mouseX, mouseY);
-        Card clicked = null;
-        if(clickedCoord!=null){
-             clicked = board[clickedCoord.getR()][clickedCoord.getC()];
-        }
-        if(clicked != null){
-            println("clicked != null");
-            int r = clickedCoord.getR();
-            int c = clickedCoord.getC();
-            if((r==board.length-1 || (r<board.length && board[r+1][c] == null)&&addToPile(clicked))) {
+        if (pilesFull()) {
+            setup();
+            println("gamed");
+        } else {
+            println(getBoardCardClicked(mouseX, mouseY));
+            Coordinate clickedCoord = getBoardCardClicked(mouseX, mouseY);
+            Card clicked = null;
+            if (clickedCoord != null) {
+                clicked = board[clickedCoord.getR()][clickedCoord.getC()];
+            }
+            if (clicked != null) {
+                println("clicked != null");
+                int r = clickedCoord.getR();
+                int c = clickedCoord.getC();
+                if ((r == board.length - 1 || (r < board.length && board[r + 1][c] == null) && addToPile(clicked))) {
 
                     board[r][c] = null;
                     if (r > 0) {
                         board[r - 1][c].faceUp();
                     }
-            } else if(addToBoard(clicked)){
-                board[clickedCoord.getR()][clickedCoord.getC()] = null;
-                if(r > 0 &&  board[r-1][c] != null){
-                    board[r-1][c].faceUp();
-                }
-                r++;
-                while(board[r][c]!=null && addToBoard(board[r][c])){
-                    println(r);
-                    board[r][c]=null;
+                } else if (addToBoard(clicked)) {
+                    board[clickedCoord.getR()][clickedCoord.getC()] = null;
+                    if (r > 0 && board[r - 1][c] != null) {
+                        board[r - 1][c].faceUp();
+                    }
                     r++;
+                    while (board[r][c] != null && addToBoard(board[r][c])) {
+                        println(r);
+                        board[r][c] = null;
+                        r++;
+                    }
                 }
             }
-//
+
+            //checking if deck clicked
+            if (checkMouseBounds(deckX, deckY, CARD_WIDTH, CARD_HEIGHT)) {
+                if (!deck.isEmpty()) {
+                    drawnPile.add(deck.removeFirst());
+                } else {
+                    deck.addAll(drawnPile);
+                    drawnPile.clear();
+                }
+
+                //checking if current card is clicked
+            } else if (!drawnPile.isEmpty() && checkMouseBounds(currCardX, currCardY, CARD_WIDTH, CARD_HEIGHT)) {
+                if (addToPile(drawnPile.getLast())) {
+                    drawnPile.removeLast();
+                } else if (addToBoard(drawnPile.getLast())) {
+                    drawnPile.removeLast();
+                }
+            }
         }
 
-        //checking if deck clicked
-        if (checkMouseBounds(deckX, deckY, CARD_WIDTH, CARD_HEIGHT)) {
-            if (!deck.isEmpty()) {
-                drawnPile.add(deck.removeFirst());
-            } else {
-                deck.addAll(drawnPile);
-                drawnPile.clear();
-            }
-
-        //checking if current card is clicked
-        } else if (!drawnPile.isEmpty() && checkMouseBounds(currCardX, currCardY, CARD_WIDTH, CARD_HEIGHT)) {
-            if (addToPile(drawnPile.getLast())) {
-                drawnPile.removeLast();
-            } else if (addToBoard(drawnPile.getLast())) {
-                drawnPile.removeLast();
-            }
-        }
     }
 
     public void keyPressed(){
@@ -245,5 +260,12 @@ public class Main extends PApplet {
             return new Coordinate(r, c);
         }
         return null;
+    }
+
+    private boolean pilesFull(){
+        if(currHearts!=null && currDiamonds!=null && currClubs!=null && currClubs!=null){
+            return currHearts.getNum() == 13 && currDiamonds.getNum() == 13 && currClubs.getNum() == 13 &&currSpades.getNum() == 13;
+        }
+        return false;
     }
 }
