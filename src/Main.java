@@ -73,17 +73,20 @@ public class Main extends PApplet {
                 }
             }
         }
-        textAlign(CENTER, CENTER);
+        fill(0);
     }
 
     //periodic
     public void draw() {
         background(200);
         if (pilesFull()) {
-            fill(0);
+            textAlign(CENTER, CENTER);
             textSize(50);
-            text("You win! Click to restart", width/2, height/2);
+            text("You win! Press any key to restart", width/2, height/2);
         } else {
+            textAlign(LEFT, CENTER);
+            textSize(30);
+            text("Press any key to restart", 45, height-50);
             if (!deck.isEmpty()) {
                 image(loadImage("url.jpeg"), deckX, deckY, CARD_WIDTH, CARD_HEIGHT);
             }
@@ -113,10 +116,7 @@ public class Main extends PApplet {
     }
 
     public void mouseClicked() {
-        if (pilesFull()) {
-            setup();
-            println("gamed");
-        } else {
+
             println(getBoardCardClicked(mouseX, mouseY));
             Coordinate clickedCoord = getBoardCardClicked(mouseX, mouseY);
             Card clicked = null;
@@ -164,12 +164,13 @@ public class Main extends PApplet {
                     drawnPile.removeLast();
                 }
             }
-        }
+
 
     }
 
     public void keyPressed(){
-
+        setup();
+        println("restarting");
     }
 
     private boolean checkMouseBounds (int x, int y, int w, int h){
@@ -263,8 +264,11 @@ public class Main extends PApplet {
     }
 
     private boolean pilesFull(){
-        if(currHearts!=null && currDiamonds!=null && currClubs!=null && currClubs!=null){
-            return currHearts.getNum() == 13 && currDiamonds.getNum() == 13 && currClubs.getNum() == 13 &&currSpades.getNum() == 13;
+        if(currHearts!=null && currDiamonds!=null && currClubs!=null && currSpades!=null){
+            println("no pile is null!");
+            boolean r = currHearts.getNum() == 13 && currDiamonds.getNum() == 13 && currClubs.getNum() == 13 &&currSpades.getNum() == 13;
+            println(r);
+            return r;
         }
         return false;
     }
