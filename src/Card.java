@@ -51,6 +51,8 @@ public class Card {
 
     public void faceUp(){up = true;}
 
+    public boolean isFaceUp(){return up;}
+
     public String toString() {
         return num + " of " + suit;
     }

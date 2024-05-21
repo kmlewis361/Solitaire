@@ -223,7 +223,7 @@ public class Main extends PApplet {
             }
             Card last = board[r][c];
             if(board[r+1][c]!=card) {
-                if (last == null && card.getNum() == 13) {
+                if (last == null && card.getNum() == 13 && card.isFaceUp()) {
                     board[0][c] = card;
                     return true;
                 } else if (last != null && oppositeColor(card, last) && card.getNum() == last.getNum() - 1) {
@@ -253,6 +253,9 @@ public class Main extends PApplet {
 
     private Coordinate getBoardCardClicked(int mX, int mY) {
         int c = (mX - boardX) / (CARD_WIDTH + CARD_WIDTH/2);
+        if(c<0 || c>=board.length){
+            return null;
+        }
         int last = getLast(c);
        // println("last: " + last);
         int r = (mY - boardY) / (CARD_WIDTH/2);
