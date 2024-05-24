@@ -182,6 +182,10 @@ public class Main extends PApplet {
     }
 
     private int getLast(int col) {
+        if(col>=board[0].length || col<0){
+            println("GETLAST COL INVALID");
+            return -1;
+        }
         for (int r = 0; r < board.length - 1; r++) {
             if (board[r + 1][col] == null) {
                 return r;
@@ -253,7 +257,7 @@ public class Main extends PApplet {
 
     private Coordinate getBoardCardClicked(int mX, int mY) {
         int c = (mX - boardX) / (CARD_WIDTH + CARD_WIDTH/2);
-        if(c<0 || c>=board.length){
+        if(c<0 || c>=board[0].length){
             return null;
         }
         int last = getLast(c);
