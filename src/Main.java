@@ -77,22 +77,27 @@ public class Main extends PApplet {
                 }
             }
         }
-        fill(0);
     }
 
     //periodic
     public void draw() {
         background(200);
         if (pilesFull()) {
+            fill(0);
             textAlign(CENTER, CENTER);
             textSize(50);
             text("You win! Press any key to restart", width/2, height/2);
         } else {
+            fill(0);
             textAlign(LEFT, CENTER);
             textSize(30);
             text("Press any key to restart", 45, height-50);
             if (!deck.isEmpty()) {
                 image(loadImage("url.jpeg"), deckX, deckY, CARD_WIDTH, CARD_HEIGHT);
+            } else {
+                fill(145);
+                noStroke();
+                rect(deckX, deckY, CARD_WIDTH, CARD_HEIGHT, 5);
             }
             if (!drawnPile.isEmpty()) {
                 drawnPile.getLast().display(currCardX, currCardY);
@@ -118,6 +123,7 @@ public class Main extends PApplet {
             }
         }
     }
+
 
     public void mouseClicked() {
 
